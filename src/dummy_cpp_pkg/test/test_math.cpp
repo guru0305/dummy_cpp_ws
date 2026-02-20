@@ -5,3 +5,8 @@ TEST(MathUtilsTest, AddPositiveNumbers)
 {
   EXPECT_DOUBLE_EQ(dummy_cpp_pkg::add(2.0, 3.0), 5.0);
 }
+
+TEST(MathUtilsTest, SubtractPositiveNumbers)
+{
+  EXPECT_EQ(dummy_cpp_pkg::subtract(5.0, 3.0), 2.0);
+}

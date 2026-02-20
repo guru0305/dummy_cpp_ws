@@ -6,3 +6,5 @@ log/
 *.so
 *.log
 *.pdf
+.vscode
+README.md
