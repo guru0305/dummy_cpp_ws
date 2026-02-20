@@ -8,5 +8,5 @@ TEST(MathUtilsTest, AddPositiveNumbers)
 
 TEST(MathUtilsTest, SubtractPositiveNumbers)
 {
-  EXPECT_EQ(dummy_cpp_pkg::subtract(5.0, 3.0), 2.0);
+  EXPECT_EQ(dummy_cpp_pkg::sub(5.0, 3.0), 2.0);
 }
