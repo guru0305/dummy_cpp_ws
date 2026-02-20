@@ -1,0 +1,16 @@
+{
+    "ROS2.distro": "humble",
+    "python.autoComplete.extraPaths": [
+        "/home/guru/dev_ws/install/slip_detector/lib/python3.10/site-packages",
+        "/home/guru/dev_ws/install/ros2_test_examples/lib/python3.10/site-packages",
+        "/home/guru/dev_ws/install/ros2_test_examples_cpp/local/lib/python3.10/dist-packages",
+        "/home/guru/dev_ws/install/lidar_2d_to_3d_markers/lib/python3.10/site-packages",
+        "/home/guru/dev_ws/install/goat_omnirobot/lib/python3.10/site-packages",
+        "/home/guru/dev_ws/install/custom_nodes/lib/python3.10/site-packages",
+        "/home/guru/dev_ws/install/bno055/lib/python3.10/site-packages",
+        "/home/guru/apex_ws/install/apex_goat_hardware_interfaces/local/lib/python3.10/dist-packages",
+        "/home/guru/apex_ws/install/apex_goat_app_interfaces/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
+}

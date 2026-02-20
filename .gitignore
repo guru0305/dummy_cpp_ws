@@ -1,0 +1,8 @@
+build/
+install/
+log/
+*.o
+*.a
+*.so
+*.log
+*.pdf
