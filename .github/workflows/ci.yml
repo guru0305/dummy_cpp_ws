@@ -13,6 +13,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Validate test directories
+      - name: Validate every package has test directory
+        run: |
+          echo "Checking that every ROS2 package has a test directory..."
+
+          FAILED=0
+
+          for pkg in src/*; do
+            if [ -d "$pkg" ]; then
+              if [ ! -f "$pkg/package.xml" ]; then
+                continue
+              fi
+
+              if [ ! -d "$pkg/test" ]; then
+                echo "❌ Package $pkg does NOT contain a test directory"
+                FAILED=1
+              else
+                echo "✔ Package $pkg has test directory"
+              fi
+            fi
+          done
+
+          if [ $FAILED -eq 1 ]; then
+            echo "One or more packages missing test directory"
+            exit 1
+          fi
+
       - name: Setup ROS2 repository
         run: |
           sudo apt update
@@ -35,4 +62,3 @@ jobs:
           source /opt/ros/humble/setup.bash
           colcon test --event-handlers console_direct+
           colcon test-result --verbose
-
