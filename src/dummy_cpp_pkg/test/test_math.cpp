@@ -20,5 +20,5 @@ TEST(MathUtilsTest, DividePositiveNumbers)
 }
 TEST(MathUtilsTest, SquarePositiveNumber)
 {
-  EXPECT_EQ(dummy_cpp_pkg::square(4.0), 15.0);
+  EXPECT_EQ(dummy_cpp_pkg::square(4.0), 14.0);
 }
