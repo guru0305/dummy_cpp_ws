@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Validate test directories
+      # Validate test directories exist
       - name: Validate every package has test directory
         run: |
           echo "Checking that every ROS2 package has a test directory..."
@@ -21,16 +21,14 @@ jobs:
           FAILED=0
 
           for pkg in src/*; do
-            if [ -d "$pkg" ]; then
-              if [ ! -f "$pkg/package.xml" ]; then
-                continue
-              fi
+            if [ -d "$pkg" ] && [ -f "$pkg/package.xml" ]; then
+              PKG_NAME=$(basename "$pkg")
 
               if [ ! -d "$pkg/test" ]; then
-                echo "❌ Package $pkg does NOT contain a test directory"
+                echo "❌ Package $PKG_NAME does NOT contain a test directory"
                 FAILED=1
               else
-                echo "✔ Package $pkg has test directory"
+                echo "✔ Package $PKG_NAME has test directory"
               fi
             fi
           done
@@ -62,3 +60,28 @@ jobs:
           source /opt/ros/humble/setup.bash
           colcon test --event-handlers console_direct+
           colcon test-result --verbose
+
+          echo "Checking each package has at least one executed test..."
+
+          FAILED=0
+
+          for pkg in src/*; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.xml" ]; then
+              PKG_NAME=$(basename "$pkg")
+
+              # Count any executed test (gtest, lint, xmllint, etc.)
+              TEST_COUNT=$(grep -h "<testcase" build/$PKG_NAME/test_results/$PKG_NAME/*.xml 2>/dev/null | wc -l)
+
+              if [ "$TEST_COUNT" -eq 0 ]; then
+                echo "❌ Package $PKG_NAME has NO executed tests"
+                FAILED=1
+              else
+                echo "✔ Package $PKG_NAME has $TEST_COUNT executed tests"
+              fi
+            fi
+          done
+
+          if [ $FAILED -eq 1 ]; then
+            echo "One or more packages failed test validation"
+            exit 1
+          fi
