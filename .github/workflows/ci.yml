@@ -62,3 +62,15 @@ jobs:
           source /opt/ros/humble/setup.bash
           colcon test --event-handlers console_direct+
           colcon test-result --verbose
+
+          echo "Checking if at least one valid test was executed..."
+
+          # Count number of executed testcases from generated XML results
+          TOTAL_TESTS=$(grep -h "<testcase" build/*/test_results/*/*.xml 2>/dev/null | wc -l)
+
+          if [ "$TOTAL_TESTS" -eq 0 ]; then
+            echo "❌ No valid tests were executed in this workspace"
+            exit 1
+          else
+            echo "✔ Total valid tests executed: $TOTAL_TESTS"
+          fi
