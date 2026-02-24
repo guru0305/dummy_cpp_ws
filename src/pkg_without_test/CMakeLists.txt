@@ -21,6 +21,7 @@ if(BUILD_TESTING)
   # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test)
 endif()
 
 ament_package()
