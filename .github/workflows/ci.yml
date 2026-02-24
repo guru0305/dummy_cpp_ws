@@ -13,52 +13,44 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Validate test directories
-      - name: Validate every package has test directory
+      - name: Setup ROS 2
+        uses: ros-tooling/setup-ros@v0.6
+        with:
+          required-ros-distributions: humble
+
+      - name: Install dependencies
         run: |
-          echo "Checking that every ROS2 package has a test directory..."
+          rosdep update
+          rosdep install --from-paths src --ignore-src -r -y
 
+      - name: Validate test directories
+        run: |
           FAILED=0
-
           for pkg in src/*; do
-            if [ -d "$pkg" ]; then
-              if [ ! -f "$pkg/package.xml" ]; then
-                continue
-              fi
-
+            if [ -f "$pkg/package.xml" ]; then
               if [ ! -d "$pkg/test" ]; then
-                echo "❌ Package $pkg does NOT contain a test directory"
+                echo "❌ Package $pkg missing test directory"
                 FAILED=1
-              else
-                echo "✔ Package $pkg has test directory"
               fi
             fi
           done
-
           if [ $FAILED -eq 1 ]; then
-            echo "One or more packages missing test directory"
             exit 1
           fi
-
-      - name: Setup ROS2 repository
-        run: |
-          sudo apt update
-          sudo apt install -y curl gnupg2 lsb-release
-          sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | sudo apt-key add -
-          echo "deb http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/ros2.list
-          sudo apt update
-
-      - name: Install ROS2 Humble
-        run: |
-          sudo apt install -y ros-humble-desktop python3-colcon-common-extensions
 
       - name: Build
         run: |
           source /opt/ros/humble/setup.bash
-          colcon build --event-handlers console_direct+
+          colcon build --merge-install --event-handlers console_direct+
 
       - name: Test
         run: |
           source /opt/ros/humble/setup.bash
           colcon test --event-handlers console_direct+
           colcon test-result --verbose
+
+          TOTAL=$(colcon test-result | grep "tests" | awk '{sum+=$1} END {print sum}')
+          if [ -z "$TOTAL" ] || [ "$TOTAL" -eq 0 ]; then
+            echo "❌ No tests executed"
+            exit 1
+          fi
