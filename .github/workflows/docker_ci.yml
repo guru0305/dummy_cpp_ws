@@ -1,0 +1,74 @@
+name: ROS2 Docker Workspace CI (ci-image branch)
+
+on:
+  push:
+    branches:
+      - ci-image
+  pull_request:
+    branches:
+      - ci-image
+
+jobs:
+  docker_build_and_test:
+    runs-on: ubuntu-22.04
+
+    container:
+      image: ghcr.io/guru0305/dummy_cpp_ws:ci-test
+
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1️⃣ Validate test directory exists
+      - name: Validate test directories
+        run: |
+          FAILED=0
+          for pkg in src/*; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.xml" ]; then
+              PKG_NAME=$(basename "$pkg")
+              if [ ! -d "$pkg/test" ]; then
+                echo "❌ $PKG_NAME missing test directory"
+                FAILED=1
+              else
+                echo "✔ $PKG_NAME has test directory"
+              fi
+            fi
+          done
+          if [ $FAILED -eq 1 ]; then
+            exit 1
+          fi
+
+      # 2️⃣ Build
+      - name: Build workspace
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon build --event-handlers console_direct+
+
+      # 3️⃣ Test
+      - name: Run tests
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon test --event-handlers console_direct+
+          colcon test-result --verbose
+
+      # 4️⃣ Ensure each package ran at least one test
+      - name: Validate test execution per package
+        run: |
+          FAILED=0
+          for pkg in src/*; do
+            if [ -d "$pkg" ] && [ -f "$pkg/package.xml" ]; then
+              PKG_NAME=$(basename "$pkg")
+              COUNT=$(grep -h "<testcase" build/$PKG_NAME/test_results/$PKG_NAME/*.xml 2>/dev/null | wc -l)
+              if [ "$COUNT" -eq 0 ]; then
+                echo "❌ $PKG_NAME executed 0 tests"
+                FAILED=1
+              else
+                echo "✔ $PKG_NAME executed $COUNT tests"
+              fi
+            fi
+          done
+          if [ $FAILED -eq 1 ]; then
+            exit 1
+          fi
