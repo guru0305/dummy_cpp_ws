@@ -15,6 +15,10 @@ jobs:
     container:
       image: ghcr.io/guru0305/dummy_cpp_ws:ci-test
 
+    defaults:
+      run:
+        shell: bash
+
     permissions:
       contents: read
 
