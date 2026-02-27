@@ -17,3 +17,4 @@ RUN apt update && apt install -y \
     && rm -rf /var/lib/apt/lists/*
 
 RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
+# test trigger
