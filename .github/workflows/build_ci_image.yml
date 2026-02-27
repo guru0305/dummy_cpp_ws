@@ -3,7 +3,7 @@ name: Build CI Image Only
 on:
   push:
     branches:
-      - ci-image-experiment
+      - ci-image
     paths:
       - Dockerfile
 
