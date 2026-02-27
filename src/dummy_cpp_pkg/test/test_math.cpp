@@ -16,5 +16,5 @@ TEST(MathUtilsTest, MultiplyPositiveNumbers)
 }
 TEST(MathUtilsTest, DividePositiveNumbers)
 {
-  EXPECT_EQ(dummy_cpp_pkg::divide(6.0, 3.0), 2.0);
+  EXPECT_EQ(dummy_cpp_pkg::divide(9.0, 3.0), 3.0);
 }
