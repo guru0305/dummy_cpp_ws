@@ -14,3 +14,11 @@ TEST(MathUtilsTest, MultiplyPositiveNumbers)
 {
   EXPECT_EQ(dummy_cpp_pkg::multiply(2.0, 3.0), 6.0);
 }
+TEST(MathUtilsTest, DividePositiveNumbers)
+{
+  EXPECT_EQ(dummy_cpp_pkg::divide(6.0, 3.0), 2.0);
+}
+TEST(MathUtilsTest, SquarePositiveNumber)
+{
+  EXPECT_EQ(dummy_cpp_pkg::square(4.0), 14.0);
+}
